@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="index.css">
+		<script src="//cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+	</head>
+	<body>
+
+	<div id="app">
+		<input v-model="tokenNumber"> # token
+		<p>{{ message }}</p>
+		<button v-on:click="dlTokens">Download token</button>
+	</div>
+
+	<script src="index.js"></script>
+	</body>
+</html>

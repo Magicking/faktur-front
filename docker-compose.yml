@@ -1,0 +1,17 @@
+version: '2'
+services:
+  fakturfront:
+    build: .
+
+  caddy-rev:
+    image: abiosoft/caddy
+    environment:
+      - ACME_AGREE=true
+    ports:
+      - "0.0.0.0:9090:80"
+    volumes:
+      - "./Caddyfile:/etc/Caddyfile:ro"
+      - "./caddycerts:/root/.caddy"
+      - "./html:/var/www:ro"
+    links:
+      - fakturfront
