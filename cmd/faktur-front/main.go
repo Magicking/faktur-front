@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/ecdsa"
 	"crypto/rand"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -50,16 +52,39 @@ func generateToken(w http.ResponseWriter, r *http.Request) {
 		}
 		fakturs = append(fakturs, NewFaktur(privateKey))
 	}
+	var hashList string
 	for k, v := range fakturs {
 		log.Printf("%d: %+v", k, v)
+		tokenHash := common.Bytes2Hex(crypto.Keccak256(v.Address.Bytes()))
+		hashList += "hash=" + tokenHash + "&"
 	}
+	log.Println(hashList)
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8090/save?"+hashList, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println(resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	log.Println(string(body))
+	fmt.Fprintf(w, string(body))
 	/*
-		req, err := http.NewRequest("GET", "http://fakturancrage", nil)
-		fmt.Println(resp, err)
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		log.Println(string(body))
-		fmt.Fprintf(w, string(body))
+		go func() {
+			//print
+			//Targethash
+			//Proofs
+			//MerkleRoot
+			//TransactionHash
+			//privatekey
+		}()
+		// for each generate token
 	*/
 }
 
